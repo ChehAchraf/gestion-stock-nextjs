@@ -1,0 +1,51 @@
+[
+  {
+    "titre": "دفتر ملاحظات",
+    "description": "دفتر ملاحظات بحجم A5، مناسب للكتابة والرسم",
+    "photo": "https://via.placeholder.com/150",
+    "prix_achat": 2.5,
+    "quantite": 50,
+    "reference": "CAH-001"
+  },
+  {
+    "titre": "قلم جاف أزرق",
+    "description": "قلم جاف باللون الأزرق، سلس الكتابة ومريح في الاستخدام",
+    "photo": "https://via.placeholder.com/150",
+    "prix_achat": 1.2,
+    "quantite": 100,
+    "reference": "STY-002"
+  },
+  {
+    "titre": "فلاش ميموري 16 جيجا",
+    "description": "ذاكرة تخزين محمولة بسعة 16 جيجابايت، سريعة النقل",
+    "photo": "https://via.placeholder.com/150",
+    "prix_achat": 10.0,
+    "quantite": 25,
+    "reference": "USB-016"
+  },
+  {
+    "titre": "ممحاة بيضاء",
+    "description": "ممحاة بيضاء عالية الجودة، تزيل آثار القلم والرصاص بسهولة",
+    "photo": "https://via.placeholder.com/150",
+    "prix_achat": 0.8,
+    "quantite": 1,
+    "reference": "ERA-003"
+  },
+  {
+    "titre": "مسطرة بلاستيكية",
+    "description": "مسطرة بلاستيكية شفافة بطول 30 سم، دقيقة القياس",
+    "photo": "https://via.placeholder.com/150",
+    "prix_achat": 1.5,
+    "quantite": 75,
+    "reference": "RUL-004"
+  },
+  {
+    "titre": "مجلد بلاستيكي",
+    "description": "مجلد بلاستيكي شفاف لحفظ الأوراق والمستندات",
+    "photo": "https://via.placeholder.com/150",
+    "prix_achat": 3.0,
+    "quantite": 1,
+    "reference": "FOL-005"
+  }
+]
+  
