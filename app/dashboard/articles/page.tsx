@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { ArticlesTable } from "../components/Tables";
 import AddProductModal from "../components/AddProductModal";
+import Pagination from "../components/Pagination";
 import { useArticlesManager } from "@/lib/hooks/useArticles";
 import { ArticleInput } from "@/lib/types/articles";
 
@@ -15,6 +16,8 @@ export default function ArticlesPage() {
   } = useArticlesManager();
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8; // عدد المنتجات في كل صفحة
 
   // تحويل بيانات Convex إلى تنسيق الجدول
   const tableArticles = articles.map(article => ({
@@ -33,6 +36,18 @@ export default function ArticlesPage() {
     article.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
     article.reference.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // حساب الصفحات
+  const totalPages = Math.ceil(filteredArticles.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentArticles = filteredArticles.slice(startIndex, endIndex);
+
+  // إعادة تعيين الصفحة عند تغيير البحث
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1); // العودة للصفحة الأولى عند البحث
+  };
 
   const handleEdit = async (article: any) => {
     console.log("Edit article:", article);
@@ -99,7 +114,7 @@ export default function ArticlesPage() {
           type="text"
           placeholder="البحث في المنتجات..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={handleSearchChange}
           className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-cairo"
         />
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -116,10 +131,22 @@ export default function ArticlesPage() {
       )}
 
       <ArticlesTable 
-        articles={filteredArticles}
+        articles={currentArticles}
         onEdit={handleEdit}
         onDelete={handleDelete}
         onAdd={() => {}} // This will be handled by the modal
+      />
+
+      {/* نظام الصفحات */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={filteredArticles.length}
+        itemsPerPage={itemsPerPage}
+        startIndex={startIndex}
+        endIndex={endIndex}
+        onPageChange={setCurrentPage}
+        itemName="منتج"
       />
 
       {/* Add Product Modal */}

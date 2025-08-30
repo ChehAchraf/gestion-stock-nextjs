@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { SalesTable } from "../components/Tables";
 import AddSaleModal from "../components/AddSaleModal";
+import Pagination from "../components/Pagination";
 import { useSalesManager } from "@/lib/hooks/useSales";
 import { SaleInput } from "@/lib/types/sales";
 
@@ -15,6 +16,8 @@ export default function SalesPage() {
   } = useSalesManager();
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8; // عدد المبيعات في كل صفحة
 
   // تحويل بيانات Convex إلى تنسيق الجدول
   const tableSales = sales.map(sale => ({
@@ -30,6 +33,18 @@ export default function SalesPage() {
   const filteredSales = tableSales.filter(sale =>
     sale.articleTitle.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // حساب الصفحات
+  const totalPages = Math.ceil(filteredSales.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentSales = filteredSales.slice(startIndex, endIndex);
+
+  // إعادة تعيين الصفحة عند تغيير البحث
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1); // العودة للصفحة الأولى عند البحث
+  };
 
   const handleEdit = async (sale: any) => {
     console.log("Edit sale:", sale);
@@ -87,7 +102,7 @@ export default function SalesPage() {
           type="text"
           placeholder="البحث في المبيعات..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={handleSearchChange}
           className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-cairo"
         />
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -104,10 +119,22 @@ export default function SalesPage() {
       )}
 
       <SalesTable
-        sales={filteredSales}
+        sales={currentSales}
         onEdit={handleEdit}
         onDelete={handleDelete}
         onAdd={() => {}} // This will be handled by the modal
+      />
+
+      {/* نظام الصفحات */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={filteredSales.length}
+        itemsPerPage={itemsPerPage}
+        startIndex={startIndex}
+        endIndex={endIndex}
+        onPageChange={setCurrentPage}
+        itemName="عملية"
       />
 
       {/* Add Sale Modal */}
