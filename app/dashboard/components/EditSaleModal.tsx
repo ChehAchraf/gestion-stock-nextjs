@@ -45,16 +45,17 @@ export default function EditSaleModal({ sale, onSubmit, trigger }: EditSaleModal
   // حساب إجمالي المبلغ
   const totalAmount = quantity * price;
   
-  // تحديث البيانات عند فتح Modal
+  // فتح Modal تلقائياً عندما يتم تمرير sale
   useEffect(() => {
-    if (sale && open) {
+    if (sale) {
+      setOpen(true);
       setSelectedArticleId(sale.articleId);
       setQuantity(sale.quantiteVendue);
       setPrice(sale.prixTotal / sale.quantiteVendue);
       setSaleDate(new Date(sale.dateVente).toISOString().split('T')[0]);
       setSearchTerm("");
     }
-  }, [sale, open]);
+  }, [sale]);
   
   // تحديث السعر عند اختيار مقال
   useEffect(() => {
@@ -112,14 +113,6 @@ export default function EditSaleModal({ sale, onSubmit, trigger }: EditSaleModal
   
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {trigger || (
-          <Button variant="outline" size="sm" className="text-blue-600 hover:text-blue-700">
-            <Edit className="w-4 h-4 ml-1" />
-            تعديل
-          </Button>
-        )}
-      </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="font-cairo text-xl">تعديل عملية البيع</DialogTitle>

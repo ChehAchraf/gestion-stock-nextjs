@@ -1,6 +1,6 @@
 "use client";
 import { TrendingUp, TrendingDown, DollarSign } from "lucide-react";
-import { ProductStats } from "@/lib/types/sales";
+import { ProductStats } from "@/lib/types/database";
 
 interface ProductStatsProps {
   mostSoldProduct: ProductStats | null;

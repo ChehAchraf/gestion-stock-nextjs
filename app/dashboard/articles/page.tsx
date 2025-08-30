@@ -59,6 +59,10 @@ export default function ArticlesPage() {
     }
   };
 
+  const handleCloseEdit = () => {
+    setEditingProduct(null);
+  };
+
   const handleUpdateProduct = async (id: string, updateData: ArticleUpdateInput) => {
     try {
       await updateArticle(id, updateData);
@@ -174,6 +178,7 @@ export default function ArticlesPage() {
         <EditProductModal
           product={editingProduct}
           onSubmit={handleUpdateProduct}
+          onClose={handleCloseEdit}
         />
       )}
     </div>

@@ -45,6 +45,15 @@ export default function AddProductModal({ onSubmit, trigger }: AddProductModalPr
   const [barcodeImage, setBarcodeImage] = useState<string>("");
   const [showScanner, setShowScanner] = useState(false);
   
+  // إضافة state للتحققات في الوقت الفعلي
+  const [validationErrors, setValidationErrors] = useState<{
+    title?: string;
+    description?: string;
+    quantity?: string;
+    purchasePrice?: string;
+    reference?: string;
+  }>({});
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
   const barcodeInputRef = useRef<HTMLInputElement>(null);
 
@@ -268,11 +277,85 @@ ${tipsText}
   };
 
   const handleSubmit = () => {
-    if (!formData.title || !formData.description || formData.quantity <= 0 || formData.purchasePrice <= 0) {
-      alert("يرجى ملء جميع الحقول المطلوبة");
+    // التحقق من العنوان
+    if (!formData.title.trim()) {
+      alert("الرجاء إدخال عنوان المنتج");
       return;
     }
     
+    if (formData.title.trim().length < 3) {
+      alert("عنوان المنتج يجب أن يكون 3 أحرف على الأقل");
+      return;
+    }
+    
+    if (formData.title.trim().length > 100) {
+      alert("عنوان المنتج يجب أن يكون أقل من 100 حرف");
+      return;
+    }
+
+    // التحقق من الوصف
+    if (!formData.description.trim()) {
+      alert("الرجاء إدخال وصف المنتج");
+      return;
+    }
+    
+    if (formData.description.trim().length < 10) {
+      alert("وصف المنتج يجب أن يكون 10 أحرف على الأقل");
+      return;
+    }
+    
+    if (formData.description.trim().length > 500) {
+      alert("وصف المنتج يجب أن يكون أقل من 500 حرف");
+      return;
+    }
+
+    // التحقق من الكمية
+    if (formData.quantity <= 0) {
+      alert("الكمية يجب أن تكون أكبر من صفر");
+      return;
+    }
+    
+    if (formData.quantity > 999999) {
+      alert("الكمية يجب أن تكون أقل من 1,000,000");
+      return;
+    }
+
+    // التحقق من سعر الشراء
+    if (formData.purchasePrice <= 0) {
+      alert("سعر الشراء يجب أن يكون أكبر من صفر");
+      return;
+    }
+    
+    if (formData.purchasePrice > 999999.99) {
+      alert("سعر الشراء يجب أن يكون أقل من 1,000,000 درهم");
+      return;
+    }
+
+    // التحقق من المرجع
+    if (!formData.reference.trim()) {
+      alert("الرجاء إدخال مرجع المنتج");
+      return;
+    }
+    
+    if (formData.reference.trim().length < 2) {
+      alert("مرجع المنتج يجب أن يكون حرفين على الأقل");
+      return;
+    }
+    
+    if (formData.reference.trim().length > 50) {
+      alert("مرجع المنتج يجب أن يكون أقل من 50 حرف");
+      return;
+    }
+
+    // التحقق من الصورة (اختياري ولكن إذا تم رفعها يجب أن تكون صحيحة)
+    if (formData.image && formData.image.length > 0) {
+      if (!formData.image.startsWith('data:image/')) {
+        alert("الرجاء اختيار صورة صحيحة");
+        return;
+      }
+    }
+
+    // إذا وصلنا إلى هنا، جميع التحققات نجحت
     onSubmit(formData);
     handleClose();
   };
@@ -291,6 +374,7 @@ ${tipsText}
     setBarcodeImage("");
     setReferenceMethod("manual");
     setShowScanner(false);
+    setValidationErrors({}); // مسح أخطاء التحقق
   };
 
   const handleBarcodeScan = (code: string) => {

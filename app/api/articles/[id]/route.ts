@@ -5,11 +5,12 @@ import { ArticleUpdateInput } from '@/lib/types/database';
 // GET - جلب منتج واحد
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    console.log('GET article request for ID:', params.id);
-    const result = await ArticlesService.getArticleById(params.id);
+    const { id } = await params;
+    console.log('GET article request for ID:', id);
+    const result = await ArticlesService.getArticleById(id);
     
     if (!result.success) {
       console.log('GET article failed:', result.message);
@@ -33,10 +34,11 @@ export async function GET(
 // PUT - تحديث منتج
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    console.log('PUT article request for ID:', params.id);
+    const { id } = await params;
+    console.log('PUT article request for ID:', id);
     const body = await request.json();
     console.log('PUT article body:', body);
     
@@ -49,7 +51,7 @@ export async function PUT(
       reference: body.reference,
     };
 
-    const result = await ArticlesService.updateArticle(params.id, updateData);
+    const result = await ArticlesService.updateArticle(id, updateData);
     
     if (!result.success) {
       console.log('PUT article failed:', result.message);
@@ -73,11 +75,12 @@ export async function PUT(
 // DELETE - حذف منتج
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    console.log('DELETE article request for ID:', params.id);
-    const result = await ArticlesService.deleteArticle(params.id);
+    const { id } = await params;
+    console.log('DELETE article request for ID:', id);
+    const result = await ArticlesService.deleteArticle(id);
     
     if (!result.success) {
       console.log('DELETE article failed:', result.message);
@@ -87,7 +90,7 @@ export async function DELETE(
       );
     }
 
-    console.log('DELETE article success for ID:', params.id);
+    console.log('DELETE article success for ID:', id);
     return NextResponse.json(result);
   } catch (error: any) {
     console.error('API Error - DELETE article:', error);

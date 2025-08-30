@@ -1,9 +1,9 @@
 "use client";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { useSales } from '@/lib/hooks/useSales';
+import { useVentes } from '@/lib/hooks/useVentesSQLite';
 
 export function SalesChart() {
-  const { sales } = useSales();
+  const { ventes, loading } = useVentes();
 
   // تحويل البيانات إلى تنسيق مناسب للرسم البياني
   const processChartData = () => {
@@ -20,15 +20,15 @@ export function SalesChart() {
     });
 
     // تجميع المبيعات حسب الشهر
-    sales.forEach(sale => {
-      const date = new Date(sale.saleDate);
+    ventes.forEach(vente => {
+      const date = new Date(vente.dateVente);
       const monthIndex = date.getMonth();
       const monthName = months[monthIndex];
       
       if (monthlyData.has(monthName)) {
         const current = monthlyData.get(monthName);
-        current.sales += sale.totalAmount;
-        current.count += sale.quantity;
+        current.sales += vente.prixTotal;
+        current.count += vente.quantiteVendue;
         monthlyData.set(monthName, current);
       }
     });
@@ -37,6 +37,20 @@ export function SalesChart() {
   };
 
   const chartData = processChartData();
+
+  if (loading) {
+    return (
+      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <h3 className="text-xl font-bold text-gray-900 font-cairo mb-6">المبيعات حسب الأشهر</h3>
+        <div className="h-80 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+            <p className="text-gray-600 font-cairo text-sm">جاري تحميل البيانات...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">

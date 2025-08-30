@@ -18,10 +18,11 @@ import { Article, ArticleUpdateInput } from "@/lib/types/database";
 interface EditProductModalProps {
   product: Article;
   onSubmit: (id: string, data: ArticleUpdateInput) => void;
+  onClose?: () => void;
   trigger?: React.ReactNode;
 }
 
-export default function EditProductModal({ product, onSubmit, trigger }: EditProductModalProps) {
+export default function EditProductModal({ product, onSubmit, onClose, trigger }: EditProductModalProps) {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<ArticleUpdateInput>({
     titre: "",
@@ -33,9 +34,10 @@ export default function EditProductModal({ product, onSubmit, trigger }: EditPro
   });
   const [imagePreview, setImagePreview] = useState<string>("");
 
-  // تحديث البيانات عند فتح Modal
+  // فتح Modal تلقائياً عندما يتم تمرير product
   useEffect(() => {
-    if (product && open) {
+    if (product) {
+      setOpen(true);
       setFormData({
         titre: product.titre,
         description: product.description,
@@ -46,7 +48,7 @@ export default function EditProductModal({ product, onSubmit, trigger }: EditPro
       });
       setImagePreview(product.photo || "");
     }
-  }, [product, open]);
+  }, [product]);
 
   const handleInputChange = (field: keyof ArticleUpdateInput, value: string | number) => {
     setFormData(prev => ({
@@ -112,19 +114,13 @@ export default function EditProductModal({ product, onSubmit, trigger }: EditPro
       reference: "",
     });
     setImagePreview("");
+    if (onClose) {
+      onClose();
+    }
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {trigger || (
-          <Button variant="outline" size="sm" className="text-blue-600 hover:text-blue-700">
-            <Edit className="w-4 h-4 ml-1" />
-            تعديل
-          </Button>
-        )}
-      </DialogTrigger>
-      
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-gray-900 font-cairo">

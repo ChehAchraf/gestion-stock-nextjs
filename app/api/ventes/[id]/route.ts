@@ -5,10 +5,11 @@ import { VenteUpdateInput } from '@/lib/types/database';
 // PUT - تحديث عملية بيع
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    console.log('PUT vente request for ID:', params.id);
+    const { id } = await params;
+    console.log('PUT vente request for ID:', id);
     const body = await request.json();
     console.log('PUT vente body:', body);
     
@@ -20,7 +21,7 @@ export async function PUT(
       dateVente: new Date(body.dateVente),
     };
 
-    const result = await VentesService.updateVente(params.id, updateData);
+    const result = await VentesService.updateVente(id, updateData);
     
     if (!result.success) {
       console.log('PUT vente failed:', result.message);
@@ -44,11 +45,12 @@ export async function PUT(
 // DELETE - حذف عملية بيع
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    console.log('DELETE vente request for ID:', params.id);
-    const result = await VentesService.deleteVente(params.id);
+    const { id } = await params;
+    console.log('DELETE vente request for ID:', id);
+    const result = await VentesService.deleteVente(id);
     
     if (!result.success) {
       console.log('DELETE vente failed:', result.message);
@@ -58,7 +60,7 @@ export async function DELETE(
       );
     }
 
-    console.log('DELETE vente success for ID:', params.id);
+    console.log('DELETE vente success for ID:', id);
     return NextResponse.json(result);
   } catch (error: any) {
     console.error('API Error - DELETE vente:', error);
