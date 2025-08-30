@@ -51,6 +51,8 @@ export interface VenteInput {
 }
 
 export interface VenteUpdateInput {
+  articleId?: string;
+  articleTitle?: string;
   quantiteVendue?: number;
   prixTotal?: number;
   dateVente?: Date;

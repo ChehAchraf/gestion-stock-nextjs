@@ -57,36 +57,33 @@ export default function BarcodeScanner({ onScan, onClose, initialValue = "" }: B
       // إنشاء قارئ الباركود
       codeReaderRef.current = new BrowserMultiFormatReader();
       
-      // بدء تشغيل الكاميرا
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          deviceId: selectedCamera,
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
-        }
-      });
-
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.play();
-      }
-
       // بدء قراءة الباركود
       const startReading = async () => {
         if (!codeReaderRef.current || !videoRef.current) return;
 
         try {
-          const result = await codeReaderRef.current.decodeFromVideoElement(videoRef.current, (result, error) => {
-            if (result) {
-              const code = result.getText();
-              setScannedCode(code);
-              onScan(code);
-              stopScanning();
+          // استخدام decodeFromConstraints بدلاً من decodeFromVideoElement
+          await codeReaderRef.current.decodeFromConstraints(
+            {
+              video: {
+                deviceId: selectedCamera,
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
+              }
+            },
+            videoRef.current,
+            (result, error) => {
+              if (result) {
+                const code = result.getText();
+                setScannedCode(code);
+                onScan(code);
+                stopScanning();
+              }
+              if (error && error.name !== 'NotFoundException') {
+                console.log('خطأ في قراءة الباركود:', error);
+              }
             }
-            if (error && error.name !== 'NotFoundException') {
-              console.log('خطأ في قراءة الباركود:', error);
-            }
-          });
+          );
         } catch (err) {
           console.error('خطأ في بدء قراءة الباركود:', err);
           setError('خطأ في قراءة الباركود');

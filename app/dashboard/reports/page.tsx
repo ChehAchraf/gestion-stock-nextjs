@@ -5,7 +5,7 @@ import { useSalesStats } from "@/lib/hooks/useVentesSQLite";
 import { useArticlesManager } from "@/lib/hooks/useArticlesSQLite";
 
 export default function ReportsPage() {
-  const { stats: salesStats, loading: salesLoading } = useSalesStats();
+  const { stats: salesStats, isLoading: salesLoading } = useSalesStats();
   const { articles, loading: articlesLoading } = useArticlesManager();
 
   if (salesLoading || articlesLoading) {

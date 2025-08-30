@@ -5,7 +5,7 @@ import { useSalesStats } from "@/lib/hooks/useVentesSQLite";
 
 export default function DashboardHome() {
   const { articles, loading: articlesLoading } = useArticlesManager();
-  const { stats, loading: salesLoading } = useSalesStats();
+  const { stats, isLoading: salesLoading } = useSalesStats();
 
   const isLoading = articlesLoading || salesLoading;
 

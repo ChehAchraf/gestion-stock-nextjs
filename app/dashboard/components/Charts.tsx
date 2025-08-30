@@ -3,7 +3,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { useVentes } from '@/lib/hooks/useVentesSQLite';
 
 export function SalesChart() {
-  const { ventes, loading } = useVentes();
+  const { ventes, isLoading } = useVentes();
 
   // تحويل البيانات إلى تنسيق مناسب للرسم البياني
   const processChartData = () => {
@@ -38,7 +38,7 @@ export function SalesChart() {
 
   const chartData = processChartData();
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
         <h3 className="text-xl font-bold text-gray-900 font-cairo mb-6">المبيعات حسب الأشهر</h3>

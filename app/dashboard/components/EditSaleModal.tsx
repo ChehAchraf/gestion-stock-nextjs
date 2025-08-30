@@ -30,7 +30,7 @@ export default function EditSaleModal({ sale, onSubmit, trigger }: EditSaleModal
   const [saleDate, setSaleDate] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
   
-  const { articles, loading } = useArticlesManager();
+  const { articles, isLoading } = useArticlesManager();
   
   // الحصول على المنتج المحدد
   const selectedArticle = articles.find(article => article.id === selectedArticleId);
@@ -142,7 +142,7 @@ export default function EditSaleModal({ sale, onSubmit, trigger }: EditSaleModal
                 
                 {/* قائمة المنتجات */}
                 <div className="max-h-48 overflow-y-auto">
-                  {loading ? (
+                  {isLoading ? (
                     <div className="p-3 text-center text-gray-500 font-cairo text-sm">
                       جاري التحميل...
                     </div>
@@ -265,7 +265,7 @@ export default function EditSaleModal({ sale, onSubmit, trigger }: EditSaleModal
           <Button 
             onClick={handleSubmit} 
             className="bg-blue-600 hover:bg-blue-700 text-white font-cairo"
-            disabled={!selectedArticleId || quantity <= 0 || price <= 0 || !saleDate || loading}
+            disabled={!selectedArticleId || quantity <= 0 || price <= 0 || !saleDate || isLoading}
           >
             حفظ التعديلات
           </Button>
