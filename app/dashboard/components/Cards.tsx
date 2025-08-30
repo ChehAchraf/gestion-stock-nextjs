@@ -110,7 +110,9 @@ export function DetailedStats({ stats }: { stats?: any }) {
     totalValue: 0,
     lowStockCount: 0,
     totalQuantity: 0,
-    averagePrice: 0
+    averagePrice: 0,
+    monthlySales: 0,
+    totalRevenue: 0
   };
 
   const currentStats = stats || defaultStats;
@@ -121,7 +123,7 @@ export function DetailedStats({ stats }: { stats?: any }) {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-gray-600 font-cairo text-sm">إجمالي الكمية</p>
-            <p className="text-xl font-bold text-gray-900 font-cairo">{currentStats.totalQuantity}</p>
+            <p className="text-xl font-bold text-gray-900 font-cairo">{currentStats.totalQuantity || 0}</p>
           </div>
           <div className="p-2 bg-blue-100 rounded-lg">
             <Package className="w-5 h-5 text-blue-600" />
@@ -133,7 +135,7 @@ export function DetailedStats({ stats }: { stats?: any }) {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-gray-600 font-cairo text-sm">متوسط السعر</p>
-            <p className="text-xl font-bold text-gray-900 font-cairo">{currentStats.averagePrice.toFixed(2)} درهم</p>
+            <p className="text-xl font-bold text-gray-900 font-cairo">{(currentStats.averagePrice || 0).toFixed(2)} درهم</p>
           </div>
           <div className="p-2 bg-green-100 rounded-lg">
             <TrendingUp className="w-5 h-5 text-green-600" />
@@ -145,7 +147,7 @@ export function DetailedStats({ stats }: { stats?: any }) {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-gray-600 font-cairo text-sm">منخفضة المخزون</p>
-            <p className="text-xl font-bold text-gray-900 font-cairo">{currentStats.lowStockCount}</p>
+            <p className="text-xl font-bold text-gray-900 font-cairo">{currentStats.lowStockCount || 0}</p>
           </div>
           <div className="p-2 bg-orange-100 rounded-lg">
             <AlertTriangle className="w-5 h-5 text-orange-600" />

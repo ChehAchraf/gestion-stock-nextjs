@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { ShoppingCart, X, Search } from "lucide-react";
+import { Edit, X, Search } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -14,14 +14,15 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { useArticlesManager } from "@/lib/hooks/useArticlesSQLite";
-import { VenteInput } from "@/lib/types/database";
+import { Vente, VenteUpdateInput } from "@/lib/types/database";
 
-interface AddSaleModalProps {
-  onSubmit: (data: VenteInput) => void;
+interface EditSaleModalProps {
+  sale: Vente;
+  onSubmit: (id: string, data: VenteUpdateInput) => void;
   trigger?: React.ReactNode;
 }
 
-export default function AddSaleModal({ onSubmit, trigger }: AddSaleModalProps) {
+export default function EditSaleModal({ sale, onSubmit, trigger }: EditSaleModalProps) {
   const [open, setOpen] = useState(false);
   const [selectedArticleId, setSelectedArticleId] = useState<string>("");
   const [quantity, setQuantity] = useState<number>(1);
@@ -44,17 +45,16 @@ export default function AddSaleModal({ onSubmit, trigger }: AddSaleModalProps) {
   // حساب إجمالي المبلغ
   const totalAmount = quantity * price;
   
-  // تعيين التاريخ الحالي عند فتح Modal
+  // تحديث البيانات عند فتح Modal
   useEffect(() => {
-    if (open && !saleDate) {
-      const today = new Date().toISOString().split('T')[0];
-      setSaleDate(today);
-    }
-    // إعادة تعيين البحث عند فتح Modal
-    if (open) {
+    if (sale && open) {
+      setSelectedArticleId(sale.articleId);
+      setQuantity(sale.quantiteVendue);
+      setPrice(sale.prixTotal / sale.quantiteVendue);
+      setSaleDate(new Date(sale.dateVente).toISOString().split('T')[0]);
       setSearchTerm("");
     }
-  }, [open, saleDate]);
+  }, [sale, open]);
   
   // تحديث السعر عند اختيار مقال
   useEffect(() => {
@@ -89,7 +89,7 @@ export default function AddSaleModal({ onSubmit, trigger }: AddSaleModalProps) {
       return;
     }
     
-    const venteData: VenteInput = {
+    const updateData: VenteUpdateInput = {
       articleId: selectedArticleId,
       articleTitle: selectedArticle.titre,
       quantiteVendue: quantity,
@@ -97,7 +97,7 @@ export default function AddSaleModal({ onSubmit, trigger }: AddSaleModalProps) {
       dateVente: new Date(saleDate),
     };
     
-    onSubmit(venteData);
+    onSubmit(sale.id, updateData);
     handleClose();
   };
   
@@ -114,15 +114,15 @@ export default function AddSaleModal({ onSubmit, trigger }: AddSaleModalProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {trigger || (
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white font-cairo">
-            <ShoppingCart className="w-4 h-4 ml-2" />
-            إضافة عملية بيع
+          <Button variant="outline" size="sm" className="text-blue-600 hover:text-blue-700">
+            <Edit className="w-4 h-4 ml-1" />
+            تعديل
           </Button>
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="font-cairo text-xl">إضافة عملية بيع جديدة</DialogTitle>
+          <DialogTitle className="font-cairo text-xl">تعديل عملية البيع</DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4">
@@ -274,7 +274,7 @@ export default function AddSaleModal({ onSubmit, trigger }: AddSaleModalProps) {
             className="bg-blue-600 hover:bg-blue-700 text-white font-cairo"
             disabled={!selectedArticleId || quantity <= 0 || price <= 0 || !saleDate || loading}
           >
-            إضافة البيع
+            حفظ التعديلات
           </Button>
         </DialogFooter>
       </DialogContent>

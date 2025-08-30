@@ -2,31 +2,33 @@
 import { useState } from "react";
 import { SalesTable } from "../components/Tables";
 import AddSaleModal from "../components/AddSaleModal";
+import EditSaleModal from "../components/EditSaleModal";
 import Pagination from "../components/Pagination";
-import { useSalesManager } from "@/lib/hooks/useSales";
-import { SaleInput } from "@/lib/types/sales";
+import { useVentesManager } from "@/lib/hooks/useVentesSQLite";
+import { VenteInput, VenteUpdateInput } from "@/lib/types/database";
 
 export default function SalesPage() {
   const {
-    sales,
-    isLoading,
-    addSale,
-    updateSale,
-    deleteSale
-  } = useSalesManager();
+    ventes,
+    loading,
+    addVente,
+    updateVente,
+    deleteVente
+  } = useVentesManager();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [editingSale, setEditingSale] = useState<any>(null);
   const itemsPerPage = 8; // عدد المبيعات في كل صفحة
 
-  // تحويل بيانات Convex إلى تنسيق الجدول
-  const tableSales = sales.map(sale => ({
-    id: sale._id,
-    articleTitle: sale.articleTitle,
-    date: new Date(sale.saleDate).toLocaleDateString('en-US'),
-    price: sale.price,
-    quantity: sale.quantity,
-    totalAmount: sale.totalAmount,
+  // تحويل بيانات SQLite إلى تنسيق الجدول
+  const tableSales = ventes.map(vente => ({
+    id: vente.id,
+    articleTitle: vente.articleTitle,
+    date: new Date(vente.dateVente).toLocaleDateString('en-US'),
+    price: vente.prixTotal / vente.quantiteVendue, // سعر الوحدة
+    quantity: vente.quantiteVendue,
+    totalAmount: vente.prixTotal,
   }));
 
   // تصفية المبيعات حسب البحث
@@ -47,31 +49,44 @@ export default function SalesPage() {
   };
 
   const handleEdit = async (sale: any) => {
-    console.log("Edit sale:", sale);
-    // TODO: تنفيذ التعديل عبر modal
+    // البحث عن عملية البيع الأصلية من قاعدة البيانات
+    const originalSale = ventes.find(v => v.id === sale.id);
+    if (originalSale) {
+      setEditingSale(originalSale);
+    }
+  };
+
+  const handleUpdateSale = async (id: string, updateData: VenteUpdateInput) => {
+    try {
+      await updateVente(id, updateData);
+      alert("تم تحديث عملية البيع بنجاح!");
+      setEditingSale(null);
+    } catch (error: any) {
+      alert(`خطأ: ${error.message}`);
+    }
   };
 
   const handleDelete = async (id: string) => {
     if (confirm("هل أنت متأكد من حذف هذه العملية؟")) {
-      const result = await deleteSale(id as any);
-      if (result.success) {
+      try {
+        await deleteVente(id);
         alert("تم حذف العملية بنجاح!");
-      } else {
-        alert(`خطأ: ${result.message}`);
+      } catch (error: any) {
+        alert(`خطأ: ${error.message}`);
       }
     }
   };
 
-  const handleAddSale = async (saleData: SaleInput) => {
-    const result = await addSale(saleData);
-    if (result.success) {
+  const handleAddSale = async (venteData: VenteInput) => {
+    try {
+      await addVente(venteData);
       alert("تم إضافة عملية البيع بنجاح!");
-    } else {
-      alert(`خطأ: ${result.message}`);
+    } catch (error: any) {
+      alert(`خطأ: ${error.message}`);
     }
   };
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="space-y-6">
         <div>
@@ -114,7 +129,7 @@ export default function SalesPage() {
 
       {searchTerm && (
         <p className="text-sm text-gray-600 font-cairo">
-          تم العثور على {filteredSales.length} عملية من أصل {sales.length}
+          تم العثور على {filteredSales.length} عملية من أصل {ventes.length}
         </p>
       )}
 
@@ -141,6 +156,14 @@ export default function SalesPage() {
       <div className="flex justify-end mt-6">
         <AddSaleModal onSubmit={handleAddSale} />
       </div>
+
+      {/* Edit Sale Modal */}
+      {editingSale && (
+        <EditSaleModal
+          sale={editingSale}
+          onSubmit={handleUpdateSale}
+        />
+      )}
     </div>
   );
 }

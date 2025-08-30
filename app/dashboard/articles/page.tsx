@@ -2,14 +2,15 @@
 import { useState } from "react";
 import { ArticlesTable } from "../components/Tables";
 import AddProductModal from "../components/AddProductModal";
+import EditProductModal from "../components/EditProductModal";
 import Pagination from "../components/Pagination";
-import { useArticlesManager } from "@/lib/hooks/useArticles";
-import { ArticleInput } from "@/lib/types/articles";
+import { useArticlesManager } from "@/lib/hooks/useArticlesSQLite";
+import { ArticleInput, ArticleUpdateInput } from "@/lib/types/database";
 
 export default function ArticlesPage() {
   const { 
     articles, 
-    isLoading, 
+    loading, 
     addArticle, 
     updateArticle, 
     deleteArticle 
@@ -17,11 +18,12 @@ export default function ArticlesPage() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [editingProduct, setEditingProduct] = useState<any>(null);
   const itemsPerPage = 8; // عدد المنتجات في كل صفحة
 
-  // تحويل بيانات Convex إلى تنسيق الجدول
+  // تحويل بيانات SQLite إلى تنسيق الجدول
   const tableArticles = articles.map(article => ({
-    id: article._id,
+    id: article.id,
     image: article.photo || "https://via.placeholder.com/48x48",
     title: article.titre,
     description: article.description,
@@ -50,17 +52,30 @@ export default function ArticlesPage() {
   };
 
   const handleEdit = async (article: any) => {
-    console.log("Edit article:", article);
-    // TODO: تنفيذ التعديل عبر modal
+    // البحث عن المنتج الأصلي من قاعدة البيانات
+    const originalProduct = articles.find(a => a.id === article.id);
+    if (originalProduct) {
+      setEditingProduct(originalProduct);
+    }
+  };
+
+  const handleUpdateProduct = async (id: string, updateData: ArticleUpdateInput) => {
+    try {
+      await updateArticle(id, updateData);
+      alert("تم تحديث المنتج بنجاح!");
+      setEditingProduct(null);
+    } catch (error: any) {
+      alert(`خطأ: ${error.message}`);
+    }
   };
 
   const handleDelete = async (id: string) => {
     if (confirm("هل أنت متأكد من حذف هذا المنتج؟")) {
-      const result = await deleteArticle(id as any);
-      if (result.success) {
+      try {
+        await deleteArticle(id);
         alert("تم حذف المنتج بنجاح!");
-      } else {
-        alert(`خطأ: ${result.message}`);
+      } catch (error: any) {
+        alert(`خطأ: ${error.message}`);
       }
     }
   };
@@ -75,15 +90,15 @@ export default function ArticlesPage() {
       reference: productData.reference,
     };
 
-    const result = await addArticle(articleData);
-    if (result.success) {
+    try {
+      await addArticle(articleData);
       alert("تم إضافة المنتج بنجاح!");
-    } else {
-      alert(`خطأ: ${result.message}`);
+    } catch (error: any) {
+      alert(`خطأ: ${error.message}`);
     }
   };
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="space-y-6">
         <div>
@@ -153,6 +168,14 @@ export default function ArticlesPage() {
       <div className="flex justify-end mt-6">
         <AddProductModal onSubmit={handleAddProduct} />
       </div>
+
+      {/* Edit Product Modal */}
+      {editingProduct && (
+        <EditProductModal
+          product={editingProduct}
+          onSubmit={handleUpdateProduct}
+        />
+      )}
     </div>
   );
 }

@@ -1,19 +1,27 @@
 "use client";
 import { StatsCards, LowStockWidget, DetailedStats } from "./components/Cards";
-import { useArticlesManager } from "@/lib/hooks/useArticles";
-import { useSalesStats } from "@/lib/hooks/useSales";
+import { useArticlesManager } from "@/lib/hooks/useArticlesSQLite";
+import { useSalesStats } from "@/lib/hooks/useVentesSQLite";
 
 export default function DashboardHome() {
-  const { articles, stats: articlesStats, isLoading: articlesLoading } = useArticlesManager();
-  const { stats: salesStats, isLoading: salesLoading } = useSalesStats();
+  const { articles, loading: articlesLoading } = useArticlesManager();
+  const { stats, loading: salesLoading } = useSalesStats();
 
   const isLoading = articlesLoading || salesLoading;
+
+  // حساب إحصائيات المنتجات
+  const articlesStats = {
+    totalProducts: articles.length,
+    totalValue: articles.reduce((sum, article) => sum + (article.prix_achat * article.quantite), 0),
+    lowStockCount: articles.filter(article => article.quantite < 2).length,
+    outOfStockCount: articles.filter(article => article.quantite === 0).length
+  };
 
   // تحويل المنتجات منخفضة المخزون
   const lowStockItems = articles
     .filter(article => article.quantite < 2)
     .map(article => ({
-      id: article._id,
+      id: article.id,
       title: article.titre,
       quantity: article.quantite,
       image: article.photo || "https://via.placeholder.com/48x48"
@@ -22,10 +30,14 @@ export default function DashboardHome() {
   // دمج الإحصائيات من المنتجات والمبيعات
   const combinedStats = {
     ...articlesStats,
-    totalSales: salesStats.totalSales || 0,
-    totalRevenue: salesStats.totalRevenue || 0,
-    monthlySales: salesStats.monthlySales || 0,
-    monthlyRevenue: salesStats.monthlyRevenue || 0
+    totalArticles: articles.length,
+    totalQuantity: articles.reduce((sum, article) => sum + article.quantite, 0),
+    averagePrice: articles.length > 0 ? articles.reduce((sum, article) => sum + article.prix_achat, 0) / articles.length : 0,
+    totalSales: stats?.totalSales || 0,
+    totalRevenue: stats?.totalRevenue || 0,
+    monthlySales: stats?.monthlySales || 0,
+    monthlyRevenue: stats?.monthlyRevenue || 0,
+    averageOrderValue: stats?.averageOrderValue || 0
   };
 
   if (isLoading) {

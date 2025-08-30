@@ -37,13 +37,13 @@ export function ArticlesTable({ articles, onEdit, onDelete, onAdd }: ArticlesTab
         <table className="w-full">
                      <thead className="bg-gray-50">
              <tr>
-               <th className="px-6 py-3 text-right font-cairo text-sm font-semibold text-gray-900">الصورة</th>
-               <th className="px-6 py-3 text-right font-cairo text-sm font-semibold text-gray-900">العنوان</th>
-               <th className="px-6 py-3 text-right font-cairo text-sm font-semibold text-gray-900">الوصف</th>
-               <th className="px-6 py-3 text-right font-cairo text-sm font-semibold text-gray-900">الكمية</th>
-               <th className="px-6 py-3 text-right font-cairo text-sm font-semibold text-gray-900">سعر الشراء</th>
-               <th className="px-6 py-3 text-right font-cairo text-sm font-semibold text-gray-900">المرجع</th>
-               <th className="px-6 py-3 text-right font-cairo text-sm font-semibold text-gray-900">الإجراءات</th>
+               <th className="px-6 py-3 text-left font-cairo text-sm font-semibold text-gray-900">الصورة</th>
+               <th className="px-6 py-3 text-left font-cairo text-sm font-semibold text-gray-900">العنوان</th>
+               <th className="px-6 py-3 text-left font-cairo text-sm font-semibold text-gray-900">الوصف</th>
+               <th className="px-6 py-3 text-left font-cairo text-sm font-semibold text-gray-900">الكمية</th>
+               <th className="px-6 py-3 text-left font-cairo text-sm font-semibold text-gray-900">سعر الشراء</th>
+               <th className="px-6 py-3 text-left font-cairo text-sm font-semibold text-gray-900">المرجع</th>
+               <th className="px-6 py-3 text-left font-cairo text-sm font-semibold text-gray-900">الإجراءات</th>
              </tr>
            </thead>
            <tbody className="divide-y divide-gray-200">
@@ -126,12 +126,12 @@ export function SalesTable({ sales, onEdit, onDelete, onAdd }: SalesTableProps) 
         <table className="w-full">
                      <thead className="bg-gray-50">
              <tr>
-               <th className="px-6 py-3 text-right font-cairo text-sm font-semibold text-gray-900">المنتج</th>
-               <th className="px-6 py-3 text-right font-cairo text-sm font-semibold text-gray-900">التاريخ</th>
-               <th className="px-6 py-3 text-right font-cairo text-sm font-semibold text-gray-900">السعر</th>
-               <th className="px-6 py-3 text-right font-cairo text-sm font-semibold text-gray-900">الكمية</th>
-               <th className="px-6 py-3 text-right font-cairo text-sm font-semibold text-gray-900">الإجمالي</th>
-               <th className="px-6 py-3 text-right font-cairo text-sm font-semibold text-gray-900">الإجراءات</th>
+               <th className="px-6 py-3 text-left font-cairo text-sm font-semibold text-gray-900">المنتج</th>
+               <th className="px-6 py-3 text-left font-cairo text-sm font-semibold text-gray-900">التاريخ</th>
+               <th className="px-6 py-3 text-left font-cairo text-sm font-semibold text-gray-900">السعر</th>
+               <th className="px-6 py-3 text-left font-cairo text-sm font-semibold text-gray-900">الكمية</th>
+               <th className="px-6 py-3 text-left font-cairo text-sm font-semibold text-gray-900">الإجمالي</th>
+               <th className="px-6 py-3 text-left font-cairo text-sm font-semibold text-gray-900">الإجراءات</th>
              </tr>
            </thead>
            <tbody className="divide-y divide-gray-200">
